@@ -8,10 +8,11 @@ import com.example.accommodationfinder.data.*
 
 @Database(
     entities = [User::class, Listing::class, Reservation::class, Message::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
+
     abstract fun userDao(): UserDao
     abstract fun listingDao(): ListingDao
     abstract fun reservationDao(): ReservationDao
@@ -28,6 +29,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "accommodation_database"
                 ).build()
+
                 INSTANCE = instance
                 instance
             }

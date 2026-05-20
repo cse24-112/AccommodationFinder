@@ -1,6 +1,8 @@
 package com.example.accommodationfinder
 
+import android.graphics.Color
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
@@ -15,12 +17,14 @@ class MessageAdapter(
     private var messages: List<Message> = emptyList()
 
     fun updateMessages(newMessages: List<Message>) {
-        this.messages = newMessages
+        messages = newMessages
         notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.message_item, parent, false)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.message_item, parent, false)
+
         return MessageViewHolder(view)
     }
 
@@ -30,29 +34,49 @@ class MessageAdapter(
 
     override fun getItemCount(): Int = messages.size
 
-    inner class MessageViewHolder(itemView: android.view.View) : RecyclerView.ViewHolder(itemView) {
-        private val card = itemView.findViewById<MaterialCardView>(itemView.id)
-        private val messageText = itemView.findViewById<TextView>(R.id.messageText)
-        private val container = itemView.findViewById<FrameLayout>(itemView.id)
+    inner class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        private val card =
+            itemView.findViewById<MaterialCardView>(R.id.messageCard)
+
+        private val messageText =
+            itemView.findViewById<TextView>(R.id.messageText)
+
+        private val container =
+            itemView.findViewById<FrameLayout>(R.id.messageContainer)
 
         fun bind(message: Message) {
+
             messageText.text = message.content
-            
+
             val isFromCurrentUser = message.senderId == currentUserId
-            val layoutParams = container.layoutParams as FrameLayout.LayoutParams
-            
+
+            val layoutParams =
+                container.layoutParams as FrameLayout.LayoutParams
+
             if (isFromCurrentUser) {
+
                 layoutParams.marginStart = 60
                 layoutParams.marginEnd = 0
-                card.setCardBackgroundColor(itemView.context.resources.getColor(R.color.primary_color, null))
-                messageText.setTextColor(android.graphics.Color.WHITE)
+
+                card.setCardBackgroundColor(
+                    itemView.context.getColor(R.color.primary_color)
+                )
+
+                messageText.setTextColor(Color.WHITE)
+
             } else {
+
                 layoutParams.marginStart = 0
                 layoutParams.marginEnd = 60
-                card.setCardBackgroundColor(itemView.context.resources.getColor(android.R.color.lighter_gray, null))
-                messageText.setTextColor(android.graphics.Color.BLACK)
+
+                card.setCardBackgroundColor(
+                    itemView.context.getColor(R.color.lighter_gray)
+                )
+
+                messageText.setTextColor(Color.BLACK)
             }
-            
+
             container.layoutParams = layoutParams
         }
     }
