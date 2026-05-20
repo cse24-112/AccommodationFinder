@@ -1,20 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Accommodation Finder"
-        android:textSize="24sp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Find Accommodation"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/logoutBtn"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/ic_launcher_foreground"
+            android:scaleType="centerInside"
+            android:padding="4dp" />
+
+    </LinearLayout>
+
+    <HorizontalScrollView
+        android:id="@+id/filterScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:scrollbars="none"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout">
+
+        <LinearLayout
+            android:id="@+id/filterLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <EditText
+                android:id="@+id/minPriceInput"
+                android:layout_width="100dp"
+                android:layout_height="45dp"
+                android:hint="Min Price"
+                android:inputType="number"
+                android:padding="10dp"
+                android:background="@drawable/edit_text_background"
+                android:textSize="12sp" />
+
+            <EditText
+                android:id="@+id/maxPriceInput"
+                android:layout_width="100dp"
+                android:layout_height="45dp"
+                android:hint="Max Price"
+                android:inputType="number"
+                android:padding="10dp"
+                android:background="@drawable/edit_text_background"
+                android:layout_marginStart="8dp"
+                android:textSize="12sp" />
+
+            <Spinner
+                android:id="@+id/locationSpinner"
+                android:layout_width="120dp"
+                android:layout_height="45dp"
+                android:layout_marginStart="8dp"
+                android:padding="10dp" />
+
+            <EditText
+                android:id="@+id/dateInput"
+                android:layout_width="120dp"
+                android:layout_height="45dp"
+                android:hint="Date (yyyy-MM-dd)"
+                android:inputType="date"
+                android:padding="10dp"
+                android:background="@drawable/edit_text_background"
+                android:layout_marginStart="8dp"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/filterBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+                android:text="Filter"
+                android:layout_marginStart="8dp"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:backgroundTint="@color/primary_color" />
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/listingsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="15dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/filterScrollView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:listitem="@layout/listing_item" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
