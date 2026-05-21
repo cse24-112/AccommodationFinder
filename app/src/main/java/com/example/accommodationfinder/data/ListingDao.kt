@@ -12,7 +12,7 @@ interface ListingDao {
     @Update
     suspend fun update(listing: Listing)
 
-    @Query("SELECT * FROM listings ORDER BY createdAt DESC")
+    @Query("SELECT * FROM listings")
     fun getAllListings(): Flow<List<Listing>>
 
     @Query("SELECT * FROM listings WHERE id = :listingId LIMIT 1")

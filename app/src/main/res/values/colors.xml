@@ -15,4 +15,6 @@
 
     <color name="card_background">#FFFFFF</color>
 
+    <color name="lighter_gray">#E0E0E0</color>
+
 </resources>

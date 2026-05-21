@@ -13,14 +13,16 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.accommodationfinder.data.Listing
-import com.example.accommodationfinder.utils.DateUtils
+import com.example.accommodationfinder.ui.mapper.ListingMapper
 import com.example.accommodationfinder.utils.SessionManager
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
+
     private lateinit var listingsRecyclerView: RecyclerView
     private lateinit var adapter: ListingAdapter
     private lateinit var db: AppDatabase
+
     private var allListings = listOf<Listing>()
 
     private val locations = listOf(
@@ -39,33 +41,38 @@ class MainActivity : AppCompatActivity() {
 
         db = AppDatabase.getDatabase(this)
 
-        // Initialize views
         listingsRecyclerView = findViewById(R.id.listingsRecyclerView)
         val minPriceInput = findViewById<EditText>(R.id.minPriceInput)
         val maxPriceInput = findViewById<EditText>(R.id.maxPriceInput)
         val locationSpinner = findViewById<Spinner>(R.id.locationSpinner)
         val dateInput = findViewById<EditText>(R.id.dateInput)
         val filterBtn = findViewById<Button>(R.id.filterBtn)
+        val inboxBtn = findViewById<Button>(R.id.inboxBtn)
         val logoutBtn = findViewById<ImageView>(R.id.logoutBtn)
 
-        // Setup RecyclerView
         adapter = ListingAdapter(this)
         listingsRecyclerView.layoutManager = LinearLayoutManager(this)
         listingsRecyclerView.adapter = adapter
 
-        // Setup location spinner
-        val spinnerAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, locations)
+        val spinnerAdapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_spinner_dropdown_item,
+            locations
+        )
         locationSpinner.adapter = spinnerAdapter
 
-        // Load all listings
         lifecycleScope.launch {
             db.listingDao().getAllListings().collect { listings ->
                 allListings = listings
-                adapter.updateListings(listings)
+
+                val uiListings = listings.map {
+                    ListingMapper.toUiModel(this@MainActivity, it)
+                }
+
+                adapter.updateListings(uiListings)
             }
         }
 
-        // Filter button listener
         filterBtn.setOnClickListener {
             val minPrice = minPriceInput.text.toString().toDoubleOrNull() ?: 0.0
             val maxPrice = maxPriceInput.text.toString().toDoubleOrNull() ?: Double.MAX_VALUE
@@ -74,26 +81,39 @@ class MainActivity : AppCompatActivity() {
 
             var filtered = allListings
 
-            // Filter by price
             if (minPrice > 0 || maxPrice < Double.MAX_VALUE) {
                 filtered = filtered.filter { it.price in minPrice..maxPrice }
             }
 
-            // Filter by location
             if (selectedLocation != "All Locations") {
-                filtered = filtered.filter { it.location.contains(selectedLocation, ignoreCase = true) }
+                filtered = filtered.filter {
+                    it.location.contains(selectedLocation, ignoreCase = true)
+                }
             }
 
-            // Filter by date
             if (selectedDate.isNotEmpty()) {
-                filtered = filtered.filter { it.availabilityDate >= selectedDate }
+                filtered = filtered.filter {
+                    it.availabilityDate >= selectedDate
+                }
             }
 
-            adapter.updateListings(filtered)
-            Toast.makeText(this, "Found ${filtered.size} listings", Toast.LENGTH_SHORT).show()
+            val uiFiltered = filtered.map {
+                ListingMapper.toUiModel(this@MainActivity, it)
+            }
+
+            adapter.updateListings(uiFiltered)
+
+            Toast.makeText(
+                this,
+                "Found ${filtered.size} listings",
+                Toast.LENGTH_SHORT
+            ).show()
         }
 
-        // Logout button listener
+        inboxBtn.setOnClickListener {
+            startActivity(Intent(this, InboxActivity::class.java))
+        }
+
         logoutBtn.setOnClickListener {
             SessionManager.logout(this)
             startActivity(Intent(this, WelcomeActivity::class.java))

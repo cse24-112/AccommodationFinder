@@ -1,11 +1,13 @@
 package com.example.accommodationfinder
 
 import android.graphics.Color
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.accommodationfinder.data.Message
 import com.google.android.material.card.MaterialCardView
@@ -34,7 +36,8 @@ class MessageAdapter(
 
     override fun getItemCount(): Int = messages.size
 
-    inner class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class MessageViewHolder(itemView: View) :
+        RecyclerView.ViewHolder(itemView) {
 
         private val card =
             itemView.findViewById<MaterialCardView>(R.id.messageCard)
@@ -46,38 +49,38 @@ class MessageAdapter(
             itemView.findViewById<FrameLayout>(R.id.messageContainer)
 
         fun bind(message: Message) {
-
             messageText.text = message.content
 
             val isFromCurrentUser = message.senderId == currentUserId
 
-            val layoutParams =
-                container.layoutParams as FrameLayout.LayoutParams
+            val layoutParams = card.layoutParams as FrameLayout.LayoutParams
 
             if (isFromCurrentUser) {
-
-                layoutParams.marginStart = 60
+                layoutParams.gravity = Gravity.END
+                layoutParams.marginStart = dpToPx(80)
                 layoutParams.marginEnd = 0
 
                 card.setCardBackgroundColor(
-                    itemView.context.getColor(R.color.primary_color)
+                    ContextCompat.getColor(itemView.context, R.color.primary_color)
                 )
-
                 messageText.setTextColor(Color.WHITE)
 
             } else {
-
+                layoutParams.gravity = Gravity.START
                 layoutParams.marginStart = 0
-                layoutParams.marginEnd = 60
+                layoutParams.marginEnd = dpToPx(80)
 
                 card.setCardBackgroundColor(
-                    itemView.context.getColor(R.color.lighter_gray)
+                    ContextCompat.getColor(itemView.context, R.color.lighter_gray)
                 )
-
                 messageText.setTextColor(Color.BLACK)
             }
 
-            container.layoutParams = layoutParams
+            card.layoutParams = layoutParams
+        }
+
+        private fun dpToPx(dp: Int): Int {
+            return (dp * itemView.context.resources.displayMetrics.density).toInt()
         }
     }
 }

@@ -8,16 +8,14 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.example.accommodationfinder.data.Listing
-
+import com.example.accommodationfinder.ui.model.ListingUiModel
 class ListingAdapter(
     private val context: Context,
-    private var listings: List<Listing> = emptyList()
+    private var listings: List<ListingUiModel> = emptyList()
 ) : RecyclerView.Adapter<ListingAdapter.ViewHolder>() {
 
-    fun updateListings(newListings: List<Listing>) {
+    fun updateListings(newListings: List<ListingUiModel>) {
         listings = newListings
         notifyDataSetChanged()
     }
@@ -25,7 +23,6 @@ class ListingAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.listing_item, parent, false)
-
         return ViewHolder(view)
     }
 
@@ -33,50 +30,39 @@ class ListingAdapter(
         holder.bind(listings[position])
     }
 
-    override fun getItemCount(): Int = listings.size
+    override fun getItemCount() = listings.size
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        private val listingImage: ImageView = itemView.findViewById(R.id.listingImage)
-        private val titleText: TextView = itemView.findViewById(R.id.titleText)
-        private val locationText: TextView = itemView.findViewById(R.id.locationText)
-        private val priceText: TextView = itemView.findViewById(R.id.priceText)
-        private val depositText: TextView = itemView.findViewById(R.id.depositText)
-        private val amenitiesText: TextView = itemView.findViewById(R.id.amenitiesText)
-        private val typeText: TextView = itemView.findViewById(R.id.typeText)
-        private val dateText: TextView = itemView.findViewById(R.id.dateText)
-        private val statusBadge: TextView = itemView.findViewById(R.id.statusBadge)
-        private val viewDetailsBtn: Button = itemView.findViewById(R.id.viewDetailsBtn)
+        private val image = itemView.findViewById<ImageView>(R.id.listingImage)
+        private val title = itemView.findViewById<TextView>(R.id.titleText)
+        private val location = itemView.findViewById<TextView>(R.id.locationText)
+        private val price = itemView.findViewById<TextView>(R.id.priceText)
+        private val deposit = itemView.findViewById<TextView>(R.id.depositText)
+        private val amenities = itemView.findViewById<TextView>(R.id.amenitiesText)
+        private val type = itemView.findViewById<TextView>(R.id.typeText)
+        private val date = itemView.findViewById<TextView>(R.id.dateText)
+        private val status = itemView.findViewById<TextView>(R.id.statusBadge)
+        private val button = itemView.findViewById<Button>(R.id.viewDetailsBtn)
 
-        fun bind(listing: Listing) {
+        fun bind(item: ListingUiModel) {
 
-            // IMAGE
-            listingImage.setImageResource(listing.imageResId)
+            image.setImageResource(item.imageResId)
 
-            // TEXT DATA
-            titleText.text = listing.title
-            locationText.text = "📍 ${listing.location}"
-            priceText.text = "P ${String.format("%.2f", listing.price)}/month"
-            depositText.text = "Deposit: P ${String.format("%.2f", listing.depositAmount)}"
-            amenitiesText.text = listing.amenities
-            typeText.text = "Type: ${listing.type}"
-            dateText.text = "Available: ${listing.availabilityDate}"
+            title.text = item.title
+            location.text = item.location
+            price.text = item.priceText
+            deposit.text = item.depositText
+            amenities.text = item.amenities
+            type.text = item.type
+            date.text = item.availabilityDate
 
-            // STATUS
-            statusBadge.text = listing.status
+            status.text = item.statusText
+            status.setBackgroundColor(item.statusColor)
 
-            val color = if (listing.status == "Available") {
-                ContextCompat.getColor(context, R.color.primary_color)
-            } else {
-                ContextCompat.getColor(context, android.R.color.darker_gray)
-            }
-
-            statusBadge.setBackgroundColor(color)
-
-            // BUTTON CLICK
-            viewDetailsBtn.setOnClickListener {
+            button.setOnClickListener {
                 val intent = Intent(context, ListingDetailActivity::class.java)
-                intent.putExtra("listing_id", listing.id)
+                intent.putExtra("listing_id", item.id)
                 context.startActivity(intent)
             }
         }
